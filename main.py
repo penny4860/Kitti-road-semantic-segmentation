@@ -139,6 +139,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             total_loss_value += loss_value
             print("loss : {}".format(loss_value))
         print("epoch: {}/{}, training loss: {}".format(epoch+1, epochs, total_loss_value))
+
 tests.test_train_nn(train_nn)
 
 
@@ -158,6 +159,7 @@ def run():
 
     correct_label = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
     learning_rate = tf.placeholder(tf.float32)
+
     with tf.Session() as sess:
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
@@ -181,6 +183,8 @@ def run():
                  correct_label, keep_prob, learning_rate)
         # TODO: Save inference data using helper.save_inference_samples
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        saver = tf.train.Saver()
+        saver.save(sess, "./model.ckpt")
 
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
