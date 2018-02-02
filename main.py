@@ -97,8 +97,18 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     :param num_classes: Number of classes to classify
     :return: Tuple of (logits, train_op, cross_entropy_loss)
     """
-    # TODO: Implement function
-    return None, None, None
+    # Reshape 4D tensors to 2D, each row represents a pixel, each column a class
+    logits = tf.reshape(nn_last_layer, (-1, num_classes))
+    class_labels = tf.reshape(correct_label, (-1, num_classes))
+    
+    # The cross_entropy_loss is the cost which we are trying to minimize to yield higher accuracy
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = class_labels)
+    cross_entropy_loss = tf.reduce_mean(cross_entropy)
+    
+    # The model implements this operation to find the weights/parameters that would yield correct pixel labels
+    train_op = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy_loss)
+    return logits, train_op, cross_entropy_loss
+
 tests.test_optimize(optimize)
 
 
@@ -117,8 +127,18 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param keep_prob: TF Placeholder for dropout keep probability
     :param learning_rate: TF Placeholder for learning rate
     """
-    # TODO: Implement function
-    pass
+    for epoch in range(epochs):
+        total_loss_value = 0
+        for images, labels in get_batches_fn(batch_size):
+            feed = {input_image: images,
+                    correct_label: labels,
+                    keep_prob: 0.75,
+                    learning_rate: 1e-4 }
+        
+            _, loss_value = sess.run([train_op, cross_entropy_loss], feed_dict = feed)
+            total_loss_value += loss_value
+            print("loss : {}".format(loss_value))
+        print("epoch: {}/{}, training loss: {}".format(epoch+1, epochs, total_loss_value))
 tests.test_train_nn(train_nn)
 
 
