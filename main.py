@@ -156,6 +156,8 @@ def run():
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
 
+    correct_label = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
+    learning_rate = tf.placeholder(tf.float32)
     with tf.Session() as sess:
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
@@ -166,13 +168,23 @@ def run():
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # TODO: Build NN using load_vgg, layers, and optimize function
+        input_image, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
+        model_output = layers(layer3, layer4, layer7, num_classes)
 
         # TODO: Train NN using the train_nn function
+        logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
+        sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
 
+        train_nn(sess, 20, 12, get_batches_fn, 
+                 train_op, cross_entropy_loss, input_image,
+                 correct_label, keep_prob, learning_rate)
         # TODO: Save inference data using helper.save_inference_samples
-        #  helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
+        # Run the model with the test images and save each painted output image (roads painted green)
+        
 
 
 if __name__ == '__main__':
