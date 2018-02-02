@@ -178,7 +178,7 @@ def run():
         sess.run(tf.global_variables_initializer())
         sess.run(tf.local_variables_initializer())
 
-        train_nn(sess, 20, 12, get_batches_fn, 
+        train_nn(sess, 20, 1, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
         # TODO: Save inference data using helper.save_inference_samples
