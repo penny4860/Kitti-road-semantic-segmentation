@@ -101,3 +101,9 @@ ENV/
 .mypy_cache/
 
 RUNS/
+
+runs
+models
+logs
+*project*
+
