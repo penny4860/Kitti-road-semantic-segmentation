@@ -180,10 +180,13 @@ def run():
         train_nn(sess, 20, 1, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
+
+        saver = tf.train.Saver()
+        saver.save(sess, "models/model.ckpt")
+        # saver.restore(sess, "models/model.ckpt")
+        
         # TODO: Save inference data using helper.save_inference_samples
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-        saver = tf.train.Saver()
-        saver.save(sess, "./model.ckpt")
 
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
