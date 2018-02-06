@@ -133,7 +133,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             feed = {input_image: images,
                     correct_label: labels,
                     keep_prob: 1.0,
-                    learning_rate: 1e-3 }
+                    learning_rate: 1e-4 }
         
             _, loss_value = sess.run([train_op, cross_entropy_loss], feed_dict = feed)
             total_loss_value += loss_value
@@ -177,7 +177,7 @@ def run():
         logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
         sess.run(tf.global_variables_initializer())
 
-        train_nn(sess, 20, 2, get_batches_fn, 
+        train_nn(sess, 100, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
 
