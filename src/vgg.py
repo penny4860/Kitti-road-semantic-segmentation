@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow.contrib.slim as slim
+import tensorflow as tf
 
 class Vgg16(object):
     def __init__(self, input_tensor):
-        self.input = input_tensor
-        
+        rgb = input_tensor - [123.68, 116.779, 103.939]
         # Build convolutional layers only
-        self.conv1_1 = slim.conv2d(input_tensor, 64, [3, 3], scope='vgg_16/conv1/conv1_1')
+        self.conv1_1 = slim.conv2d(rgb, 64, [3, 3], scope='vgg_16/conv1/conv1_1')
         self.conv1_2 = slim.conv2d(self.conv1_1, 64, [3, 3], scope='vgg_16/conv1/conv1_2')
         self.pool1 = slim.max_pool2d(self.conv1_2, [2, 2], scope='pool1')
         
