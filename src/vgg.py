@@ -57,16 +57,35 @@ class Vgg16(object):
         init_assign_op, init_feed_dict = slim.assign_from_checkpoint(ckpt, variables)
         sess.run(init_assign_op, init_feed_dict)
 
-#     def get_activation(self, layer_name='conv5_1'):
-#         return self.layers[layer_name]
 
 if __name__ == '__main__':
     import tensorflow as tf
+    import numpy as np
     input_tensor = tf.placeholder(tf.float32, [None, None, None, 3])
     vgg = Vgg16(input_tensor)
     
-    sess = tf.Session()
-    vgg.load_ckpt(sess, ckpt="../data_tiny/vgg/vgg_16.ckpt")
+    np.set_printoptions(linewidth=20000, threshold=1000000, suppress=False)
+    np.random.seed(1234)
+    
+    x = np.random.randn(1, 32, 32, 3)
+    # vgg_path = os.path.join('data_tiny', 'vgg')
+     
+    # tf.set_random_seed(1234)
+    with tf.Session() as sess:
+        # input_tensor, keep_prob_tensor, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
+#         sess.run(tf.global_variables_initializer())
+#         pool3_value, pool4_value, pool7_value = sess.run([layer3, layer4, layer7], feed_dict = {input_tensor : x,
+#                                                                                                 keep_prob_tensor : 1.0})
+        
+        sess.run(tf.global_variables_initializer())
+        vgg.load_ckpt(sess, ckpt="../data_tiny/vgg/vgg_16.ckpt")
+        pool6_value, pool7_value = sess.run([vgg.pool6, vgg.pool7], feed_dict = {input_tensor: x})
+        pool6_value = pool6_value.reshape(-1,)
+        pool7_value = pool7_value.reshape(-1,)
+        print(pool6_value[:3], pool7_value[:3])
+        
+    
+    
     
     
     
