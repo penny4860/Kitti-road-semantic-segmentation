@@ -56,7 +56,7 @@ class Vgg16(object):
 #                        }
 
     def load_ckpt(self, sess, ckpt='ckpts/vgg_16.ckpt'):
-        variables = slim.get_variables(scope='vgg_16')
+        variables = slim.get_variables(scope='vgg_16', suffix="weights") + slim.get_variables(scope='vgg_16', suffix="biases")
         init_assign_op, init_feed_dict = slim.assign_from_checkpoint(ckpt, variables)
         sess.run(init_assign_op, init_feed_dict)
 
