@@ -33,6 +33,8 @@ class Vgg16(object):
         
         # Use conv2d instead of fully_connected layers.
         self.pool6 = slim.conv2d(self.pool5, 4096, [7, 7], scope='vgg_16/fc6')
+#         self.keep_prob = tf.placeholder(tf.float32)
+#         pool6_drop = tf.nn.dropout(self.pool6, self.keep_prob)
 #         net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
 #                          scope='dropout6')
         self.pool7 = slim.conv2d(self.pool6, 4096, [1, 1], scope='vgg_16/fc7')
