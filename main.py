@@ -17,34 +17,6 @@ else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
 
-def load_vgg(sess, vgg_path):
-    """
-    Load Pretrained VGG Model into TensorFlow.
-    :param sess: TensorFlow Session
-    :param vgg_path: Path to vgg folder, containing "variables/" and "saved_model.pb"
-    :return: Tuple of Tensors from VGG model (image_input, keep_prob, layer3_out, layer4_out, layer7_out)
-    """
-    # TODO: Implement function
-    #   Use tf.saved_model.loader.load to load the model and weights
-    vgg_tag = 'vgg16'
-    vgg_input_tensor_name = 'image_input:0'
-    vgg_keep_prob_tensor_name = 'keep_prob:0'
-    vgg_layer3_out_tensor_name = 'layer3_out:0'
-    vgg_layer4_out_tensor_name = 'layer4_out:0'
-    vgg_layer7_out_tensor_name = 'layer7_out:0'
-
-    tf.saved_model.loader.load(sess, [vgg_tag], vgg_path)
-    graph = tf.get_default_graph()
-    input_tensor = graph.get_tensor_by_name(vgg_input_tensor_name)
-    keep_prob_tensor = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
-    layer3_out_tensor = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
-    layer4_out_tensor = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
-    layer7_out_tensor = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
-    
-    return input_tensor, keep_prob_tensor, layer3_out_tensor, layer4_out_tensor, layer7_out_tensor
-tests.test_load_vgg(load_vgg, tf)
-
-
 def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     Create the layers for a fully convolutional network.  Build skip-layers using the vgg layers.
@@ -159,35 +131,37 @@ def run():
 
     correct_label = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
     learning_rate = tf.placeholder(tf.float32)
-
+    
+    input_image = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
+    keep_prob = tf.placeholder(tf.float32)
+    
+    from src.vgg import Vgg16
+    vgg16 = Vgg16(input_image)
+    model_output = layers(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes)
+    logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
+    
     with tf.Session() as sess:
-        # Path to vgg model
-        vgg_path = os.path.join(data_dir, 'vgg')
         # Create function to get batches
         get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
-
+ 
         # OPTIONAL: Augment Images for better results
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
-
         # TODO: Build NN using load_vgg, layers, and optimize function
-        input_image, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
-        model_output = layers(layer3, layer4, layer7, num_classes)
-
         # TODO: Train NN using the train_nn function
-        logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
         sess.run(tf.global_variables_initializer())
-
+        vgg16.load_ckpt(sess, 'data_tiny/vgg/vgg_16.ckpt')
+ 
         train_nn(sess, 100, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
-
+ 
         saver = tf.train.Saver()
         saver.save(sess, "models/model.ckpt")
         # saver.restore(sess, "models/model.ckpt")
-        
+         
         # TODO: Save inference data using helper.save_inference_samples
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-
+ 
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
         
