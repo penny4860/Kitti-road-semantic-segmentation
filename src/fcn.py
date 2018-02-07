@@ -11,20 +11,6 @@ def fcn(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :param num_classes: Number of classes to classify
     :return: The Tensor for the last layer of output
     """
-    def conv_1x1(input_layer, n_classes):
-        return tf.layers.conv2d(input_layer, n_classes, 1,
-                                strides=(1,1),
-                                padding= 'same',
-                                kernel_initializer= tf.random_normal_initializer(stddev=0.01),
-                                kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3))
-
-    def upsampling(input_layer, n_classes, ratio=2):
-        return tf.layers.conv2d_transpose(input_layer, n_classes, ratio*2,
-                                          strides=(ratio, ratio),
-                                          padding= 'same', 
-                                          kernel_initializer= tf.random_normal_initializer(stddev=0.01), 
-                                          kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3))
-        
     # layer7_decoder : (H/32, W/32, num_classes)
     layer7_decoder = conv_1x1(vgg_layer7_out, num_classes)
 
@@ -41,4 +27,20 @@ def fcn(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     # decoder : (H, W, num_classes)
     decoder = upsampling(layer3_decoder, num_classes, ratio=8)
     return decoder
+
+def conv_1x1(input_layer, n_classes):
+    return tf.layers.conv2d(input_layer, n_classes, 1,
+                            strides=(1,1),
+                            padding= 'same',
+                            kernel_initializer= tf.random_normal_initializer(stddev=0.01),
+                            kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3))
+
+def upsampling(input_layer, n_classes, ratio=2):
+    return tf.layers.conv2d_transpose(input_layer, n_classes, ratio*2,
+                                      strides=(ratio, ratio),
+                                      padding= 'same', 
+                                      kernel_initializer= tf.random_normal_initializer(stddev=0.01), 
+                                      kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3))
+
+
 
