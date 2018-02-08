@@ -104,10 +104,7 @@ def run():
         # Create function to get batches
         get_batches_fn = gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
  
-        # OPTIONAL: Augment Images for better results
-        #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
-        # TODO: Build NN using load_vgg, layers, and optimize function
-        # TODO: Train NN using the train_nn function
+        # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
         fcn_model.load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
         
