@@ -43,7 +43,7 @@ tests.test_optimize(optimize)
 
 
 def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image,
-             correct_label, keep_prob, learning_rate):
+             correct_label, keep_prob, learning_rate, is_training):
     """
     Train neural network and print out the loss during training.
     :param sess: TF Session
@@ -63,14 +63,15 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             feed = {input_image: images,
                     correct_label: labels,
                     keep_prob: 1.0,
-                    learning_rate: 1e-4 }
+                    learning_rate: 1e-1,
+                    is_training : True }
         
             _, loss_value = sess.run([train_op, cross_entropy_loss], feed_dict = feed)
             total_loss_value += loss_value
             # print("loss : {:.2f}".format(loss_value))
         print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
 
-tests.test_train_nn(train_nn)
+# tests.test_train_nn(train_nn)
 
 
 def run():
@@ -92,11 +93,12 @@ def run():
     
     input_image = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
     keep_prob = tf.placeholder(tf.float32)
+    is_training = tf.placeholder(tf.bool)
     
     from src.vgg import Vgg16
     from src.fcn import fcn
-    vgg16 = Vgg16(input_image)
-    model_output = fcn(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes)
+    vgg16 = Vgg16(input_image, is_training)
+    model_output = fcn(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes, is_training)
     logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
     
     with tf.Session() as sess:
@@ -108,18 +110,18 @@ def run():
         # TODO: Build NN using load_vgg, layers, and optimize function
         # TODO: Train NN using the train_nn function
         sess.run(tf.global_variables_initializer())
-        vgg16.load_ckpt(sess, 'data_tiny/vgg/vgg_16.ckpt')
+        vgg16.load_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
  
-        train_nn(sess, 100, 2, get_batches_fn, 
+        train_nn(sess, 50, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
-                 correct_label, keep_prob, learning_rate)
+                 correct_label, keep_prob, learning_rate, is_training)
  
         saver = tf.train.Saver()
         saver.save(sess, "models/model.ckpt")
         # saver.restore(sess, "models/model.ckpt")
          
         # TODO: Save inference data using helper.save_inference_samples
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_training, input_image)
  
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
