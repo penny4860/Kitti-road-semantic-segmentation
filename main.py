@@ -95,11 +95,10 @@ def run():
     keep_prob = tf.placeholder(tf.float32)
     is_training = tf.placeholder(tf.bool)
     
-    from src.vgg import Vgg16
-    from src.fcn import fcn
-    vgg16 = Vgg16(input_image, is_training)
-    model_output = fcn(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes, is_training)
-    logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
+    from src.fcn import FcnModel
+    fcn_model = FcnModel(input_image, is_training)
+    inference_op = fcn_model.get_inference_op(num_classes)
+    logits, train_op, cross_entropy_loss = optimize(inference_op, correct_label, learning_rate, num_classes)
     
     with tf.Session() as sess:
         # Create function to get batches
@@ -110,8 +109,8 @@ def run():
         # TODO: Build NN using load_vgg, layers, and optimize function
         # TODO: Train NN using the train_nn function
         sess.run(tf.global_variables_initializer())
-        vgg16.load_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
- 
+        fcn_model.load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
+        
         train_nn(sess, 50, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate, is_training)
