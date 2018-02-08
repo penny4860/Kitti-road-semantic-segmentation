@@ -11,12 +11,20 @@ class FcnModel(object):
         self._is_training = is_training
         self._n_classes = n_classes
         
-        # basic operations
+        # public member : basic operations
+        ################################################################
         self.inference_op = self._create_inference_op(n_classes)
         self.loss_op = self._create_loss_op(y_true_tensor)
-        # self.accuracy_op = self._create_accuracy_op()
-
+        self.mean_iou_op, self.update_op = self._create_accuracy_op(y_true_tensor)
         self.summary_op = self._create_train_summary_op()
+        ################################################################
+        
+    def _create_accuracy_op(self, y_true_tensor):
+        logits = tf.reshape(self.inference_op, (-1, self._n_classes))
+        pred_labels = tf.argmax(logits, 1)
+        labels = tf.reshape(y_true_tensor, (-1, self._n_classes))
+        mean_iou_op, update_op = tf.metrics.mean_iou(labels, pred_labels, self._n_classes)
+        return mean_iou_op, update_op
 
     def _create_inference_op(self, num_classes):
         batch_norm_params = {'is_training': self._is_training,
