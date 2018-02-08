@@ -62,16 +62,17 @@ def run():
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
 
-    correct_label = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
-    learning_rate = tf.placeholder(tf.float32)
-    
-    input_image = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
+    x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
+    y_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
+    lr_placeholder = tf.placeholder(tf.float32)
+    is_train_placeholder = tf.placeholder(tf.bool)
+
+
     keep_prob = tf.placeholder(tf.float32)
-    is_training = tf.placeholder(tf.bool)
     
     from src.fcn import FcnModel
-    fcn_model = FcnModel(input_image, correct_label, is_training, num_classes)
-    train_op = tf.train.AdamOptimizer(learning_rate).minimize(fcn_model.loss_op)
+    fcn_model = FcnModel(x_placeholder, y_placeholder, is_train_placeholder, num_classes)
+    train_op = tf.train.AdamOptimizer(lr_placeholder).minimize(fcn_model.loss_op)
     
     with tf.Session() as sess:
         # Create function to get batches
@@ -82,8 +83,8 @@ def run():
         load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
         
         train_nn(sess, 50, 2, get_batches_fn, 
-                 train_op, fcn_model.loss_op, input_image,
-                 correct_label, keep_prob, learning_rate, is_training)
+                 train_op, fcn_model.loss_op, x_placeholder,
+                 y_placeholder, keep_prob, lr_placeholder, is_train_placeholder)
  
         saver = tf.train.Saver()
         saver.save(sess, "models/model.ckpt")
@@ -91,7 +92,7 @@ def run():
          
         # TODO: Save inference data using helper.save_inference_samples
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_training, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_train_placeholder, x_placeholder)
  
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
