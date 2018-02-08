@@ -98,7 +98,7 @@ def run():
     from src.vgg import Vgg16
     from src.fcn import fcn
     vgg16 = Vgg16(input_image, is_training)
-    model_output = fcn(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes)
+    model_output = fcn(vgg16.pool3, vgg16.pool4, vgg16.pool7, num_classes, is_training)
     logits, train_op, cross_entropy_loss = optimize(model_output, correct_label, learning_rate, num_classes)
     
     with tf.Session() as sess:
