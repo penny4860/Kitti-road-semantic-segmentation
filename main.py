@@ -4,6 +4,7 @@ import helper
 import warnings
 from distutils.version import LooseVersion
 import project_tests as tests
+from src.batch import gen_batch_function
 
 
 # Check TensorFlow Version
@@ -100,7 +101,7 @@ def run():
     
     with tf.Session() as sess:
         # Create function to get batches
-        get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
+        get_batches_fn = gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
  
         # OPTIONAL: Augment Images for better results
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
