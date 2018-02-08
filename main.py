@@ -58,10 +58,6 @@ def run():
     data_dir = './data_tiny'
     runs_dir = './runs_tiny'
     # tests.test_for_kitti_dataset(data_dir)
-
-    # Download pretrained vgg model
-    helper.maybe_download_pretrained_vgg(data_dir)
-
     # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
