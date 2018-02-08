@@ -110,7 +110,7 @@ def run():
         # TODO: Build NN using load_vgg, layers, and optimize function
         # TODO: Train NN using the train_nn function
         sess.run(tf.global_variables_initializer())
-        vgg16.load_ckpt(sess, 'data_tiny/vgg/vgg_16.ckpt')
+        vgg16.load_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
  
         train_nn(sess, 50, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
