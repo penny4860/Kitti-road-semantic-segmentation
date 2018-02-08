@@ -63,7 +63,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             feed = {input_image: images,
                     correct_label: labels,
                     keep_prob: 1.0,
-                    learning_rate: 1e-2,
+                    learning_rate: 1e-1,
                     is_training : True }
         
             _, loss_value = sess.run([train_op, cross_entropy_loss], feed_dict = feed)
@@ -112,7 +112,7 @@ def run():
         sess.run(tf.global_variables_initializer())
         vgg16.load_ckpt(sess, 'data_tiny/vgg/vgg_16.ckpt')
  
-        train_nn(sess, 100, 2, get_batches_fn, 
+        train_nn(sess, 50, 2, get_batches_fn, 
                  train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate, is_training)
  
