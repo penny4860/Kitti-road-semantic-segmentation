@@ -41,27 +41,10 @@ class Vgg16(object):
             
             # Use conv2d instead of fully_connected layers.
             self.pool6 = slim.conv2d(self.pool5, 4096, [7, 7], scope='vgg_16/fc6')
-    #         self.keep_prob = tf.placeholder(tf.float32)
-    #         pool6_drop = tf.nn.dropout(self.pool6, self.keep_prob)
+    #         pool6_drop = tf.nn.dropout(self.pool6, keep_prob)
     #         net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
     #                          scope='dropout6')
             self.pool7 = slim.conv2d(self.pool6, 4096, [1, 1], scope='vgg_16/fc7')
-            
-    #         self.layers = {'conv1_1' : self.conv1_1,
-    #                        'conv1_2' : self.conv1_2,
-    #                        'conv2_1' : self.conv2_1,
-    #                        'conv2_2' : self.conv2_2,
-    #                        'conv3_1' : self.conv3_1,
-    #                        'conv3_2' : self.conv3_2,
-    #                        'conv3_3' : self.conv3_3,
-    #                        'conv4_1' : self.conv4_1,
-    #                        'conv4_2' : self.conv4_2,
-    #                        'conv4_3' : self.conv4_3,
-    #                        'conv5_1' : self.conv5_1,
-    #                        'conv5_2' : self.conv5_2,
-    #                        'conv5_3' : self.conv5_3,
-    #                        
-    #                        }
 
     def load_ckpt(self, sess, ckpt='ckpts/vgg_16.ckpt'):
         variables = slim.get_variables(scope='vgg_16', suffix="weights") + slim.get_variables(scope='vgg_16', suffix="biases")
@@ -79,7 +62,6 @@ if __name__ == '__main__':
      
     x = np.random.randn(1, 32, 32, 3)
     # vgg_path = os.path.join('data_tiny', 'vgg')
-      
     # tf.set_random_seed(1234)
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
