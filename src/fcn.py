@@ -14,24 +14,9 @@ class FcnModel(object):
         # basic operations
         self.inference_op = self._create_inference_op(n_classes)
         self.loss_op = self._create_loss_op(y_true_tensor)
-#         self.accuracy_op = self._create_accuracy_op()
+        # self.accuracy_op = self._create_accuracy_op()
 
         self.summary_op = self._create_train_summary_op()
-
-    def create_loss_op(self, y_true_tensor):
-        logits = tf.reshape(self.inference_op, (-1, self._n_classes))
-        class_labels = tf.reshape(y_true_tensor, (-1, self._n_classes))
-        
-        # The cross_entropy_loss is the cost which we are trying to minimize to yield higher accuracy
-        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = class_labels)
-        cross_entropy_loss = tf.reduce_mean(cross_entropy)
-        return cross_entropy_loss
-
-    def _create_train_summary_op(self):
-        with tf.name_scope('train_summary'):
-            summary_loss = tf.summary.scalar('loss', self.loss_op)
-            summary_op = tf.summary.merge([summary_loss], name='train_summary')
-            return summary_op
 
     def _create_inference_op(self, num_classes):
         batch_norm_params = {'is_training': self._is_training,
@@ -58,12 +43,21 @@ class FcnModel(object):
         # decoder : (H, W, num_classes)
         inference_op = _upsampling(layer3_decoder, num_classes, ratio=8)
         return inference_op
-    
-    # Todo : session 관련된 함수는 삭제하자.
-    def load_vgg_ckpt(self, sess, ckpt='ckpts/vgg_16.ckpt'):
-        variables = slim.get_variables(scope='vgg_16', suffix="weights") + slim.get_variables(scope='vgg_16', suffix="biases")
-        init_assign_op, init_feed_dict = slim.assign_from_checkpoint(ckpt, variables)
-        sess.run(init_assign_op, init_feed_dict)
+
+    def _create_loss_op(self, y_true_tensor):
+        logits = tf.reshape(self.inference_op, (-1, self._n_classes))
+        class_labels = tf.reshape(y_true_tensor, (-1, self._n_classes))
+        
+        # The cross_entropy_loss is the cost which we are trying to minimize to yield higher accuracy
+        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = class_labels)
+        cross_entropy_loss = tf.reduce_mean(cross_entropy)
+        return cross_entropy_loss
+
+    def _create_train_summary_op(self):
+        with tf.name_scope('train_summary'):
+            summary_loss = tf.summary.scalar('loss', self.loss_op)
+            summary_op = tf.summary.merge([summary_loss], name='train_summary')
+            return summary_op
 
 
 def _conv_1x1(input_layer, n_classes):

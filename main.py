@@ -4,7 +4,7 @@ import helper
 import warnings
 from distutils.version import LooseVersion
 from src.batch import gen_batch_function
-
+import tensorflow.contrib.slim as slim
 
 # Check TensorFlow Version
 assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
@@ -46,7 +46,10 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             # print("loss : {:.2f}".format(loss_value))
         print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
 
-# tests.test_train_nn(train_nn)
+def load_vgg_ckpt(sess, ckpt='ckpts/vgg_16.ckpt'):
+    variables = slim.get_variables(scope='vgg_16', suffix="weights") + slim.get_variables(scope='vgg_16', suffix="biases")
+    init_assign_op, init_feed_dict = slim.assign_from_checkpoint(ckpt, variables)
+    sess.run(init_assign_op, init_feed_dict)
 
 
 def run():
@@ -80,7 +83,7 @@ def run():
  
         # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
-        fcn_model.load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
+        load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
         
         train_nn(sess, 50, 2, get_batches_fn, 
                  train_op, fcn_model.loss_op, input_image,
