@@ -81,10 +81,32 @@ def run():
         # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
         load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
+
+        ###############################################################################################        
+        epochs = 50
+        batch_size = 2
+        for epoch in range(epochs):
+            total_loss_value = 0
+            for images, labels in get_batches_fn(batch_size):
+                feed = {x_placeholder: images,
+                        y_placeholder: labels,
+                        lr_placeholder: 1e-1,
+                        is_train_placeholder : True }
+            
+                _, loss_value = sess.run([train_op, fcn_model.loss_op], feed_dict = feed)
+                total_loss_value += loss_value
+                # print("loss : {:.2f}".format(loss_value))
+            print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
+
+            feed = {x_placeholder: images,
+                    y_placeholder: labels,
+                    is_train_placeholder : False }
+            sess.run(tf.local_variables_initializer())
+            sess.run(fcn_model.update_op, feed_dict = feed)
+            loss_value, acc, iou = sess.run([fcn_model.loss_op, fcn_model.accuracy_op, fcn_model.iou_op], feed_dict = feed)
+            print("    loss: {:.3f}, accuracy: {:.3f}, iou: {:.3f}".format(loss_value, acc, iou))
+        ###############################################################################################        
         
-        train_nn(sess, 50, 2, get_batches_fn, 
-                 train_op, fcn_model.loss_op, x_placeholder,
-                 y_placeholder, keep_prob, lr_placeholder, is_train_placeholder)
  
         saver = tf.train.Saver()
         saver.save(sess, "models/model.ckpt")
