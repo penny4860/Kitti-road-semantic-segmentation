@@ -17,35 +17,6 @@ else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
 
-def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image,
-             correct_label, keep_prob, learning_rate, is_training):
-    """
-    Train neural network and print out the loss during training.
-    :param sess: TF Session
-    :param epochs: Number of epochs
-    :param batch_size: Batch size
-    :param get_batches_fn: Function to get batches of training data.  Call using get_batches_fn(batch_size)
-    :param train_op: TF Operation to train the neural network
-    :param cross_entropy_loss: TF Tensor for the amount of loss
-    :param input_image: TF Placeholder for input images
-    :param correct_label: TF Placeholder for label images
-    :param keep_prob: TF Placeholder for dropout keep probability
-    :param learning_rate: TF Placeholder for learning rate
-    """
-    for epoch in range(epochs):
-        total_loss_value = 0
-        for images, labels in get_batches_fn(batch_size):
-            feed = {input_image: images,
-                    correct_label: labels,
-                    keep_prob: 1.0,
-                    learning_rate: 1e-1,
-                    is_training : True }
-        
-            _, loss_value = sess.run([train_op, cross_entropy_loss], feed_dict = feed)
-            total_loss_value += loss_value
-            # print("loss : {:.2f}".format(loss_value))
-        print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
-
 def load_vgg_ckpt(sess, ckpt='ckpts/vgg_16.ckpt'):
     variables = slim.get_variables(scope='vgg_16', suffix="weights") + slim.get_variables(scope='vgg_16', suffix="biases")
     init_assign_op, init_feed_dict = slim.assign_from_checkpoint(ckpt, variables)
