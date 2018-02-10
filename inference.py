@@ -5,17 +5,17 @@ import helper
 
 from src.fcn import FcnModel
 
-DATA_DIR = './data_tiny'
-RUNS_DIR = './runs_tiny'
+DEFAULT_DATA_DIR = './data_tiny'
+DEFAULT_RUNS_DIR = './runs_tiny'
 
 argparser = argparse.ArgumentParser(description='Inference using pretrained model')
 argparser.add_argument('-d',
                        '--dataset',
-                       default=DATA_DIR,
+                       default=DEFAULT_DATA_DIR,
                        help='path to dataset')
 argparser.add_argument('-r',
                        '--runs',
-                       default=RUNS_DIR,
+                       default=DEFAULT_RUNS_DIR,
                        help='path to saved directory')
 
 if __name__ == '__main__':
@@ -35,8 +35,8 @@ if __name__ == '__main__':
         saver.restore(sess, "models/model.ckpt")
         
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
-        helper.save_inference_samples(args.dataset,
-                                      args.runs,
+        helper.save_inference_samples(args.runs,
+                                      args.dataset,
                                       sess,
                                       image_shape, 
                                       logits,
