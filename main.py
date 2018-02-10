@@ -53,22 +53,19 @@ def load_vgg_ckpt(sess, ckpt='ckpts/vgg_16.ckpt'):
 
 
 def run():
+    ##########################################
     num_classes = 2
     image_shape = (160, 576)
     data_dir = './data_tiny'
     runs_dir = './runs_tiny'
-    # tests.test_for_kitti_dataset(data_dir)
-    # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
-    # You'll need a GPU with at least 10 teraFLOPS to train on.
-    #  https://www.cityscapes-dataset.com/
+    epochs = 50
+    batch_size = 2
+    ##########################################
 
     x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
     y_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
     lr_placeholder = tf.placeholder(tf.float32)
     is_train_placeholder = tf.placeholder(tf.bool)
-
-
-    keep_prob = tf.placeholder(tf.float32)
     
     from src.fcn import FcnModel
     fcn_model = FcnModel(x_placeholder, y_placeholder, is_train_placeholder, num_classes)
@@ -82,9 +79,7 @@ def run():
         sess.run(tf.global_variables_initializer())
         load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
 
-        ###############################################################################################        
-        epochs = 50
-        batch_size = 2
+        ###############################################################################################
         for epoch in range(epochs):
             total_loss_value = 0
             for images, labels in get_batches_fn(batch_size):
@@ -110,7 +105,6 @@ def run():
  
         saver = tf.train.Saver()
         saver.save(sess, "models/model.ckpt")
-        # saver.restore(sess, "models/model.ckpt")
          
         # TODO: Save inference data using helper.save_inference_samples
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
@@ -118,7 +112,6 @@ def run():
  
         # OPTIONAL: Apply the trained model to a video
         # Run the model with the test images and save each painted output image (roads painted green)
-        
 
 
 if __name__ == '__main__':
