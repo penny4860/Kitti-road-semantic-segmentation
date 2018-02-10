@@ -103,6 +103,7 @@ def run():
             feed = {x_placeholder: img,
                     y_placeholder: y_gt,
                     is_train_placeholder : False }
+            sess.run(tf.local_variables_initializer())
             sess.run(fcn_model.update_op, feed_dict = feed)
             
             loss_value, acc, iou = sess.run([fcn_model.loss_op, fcn_model.accuracy_op, fcn_model.iou_op], feed_dict = feed)
