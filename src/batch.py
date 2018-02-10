@@ -55,9 +55,6 @@ if __name__ == '__main__':
     print(imgs.shape, gt_imgs.shape)
     
     from src.utils import plot_img
-    plot_img([imgs[1], gt_imgs[1,:,:,1], gt_imgs[1,:,:,0]])
-    
-    
-    
+    plot_img([imgs[1], gt_imgs[1,:,:,0], gt_imgs[1,:,:,1]])
     
     
