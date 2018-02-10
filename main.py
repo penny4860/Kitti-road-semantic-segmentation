@@ -29,7 +29,7 @@ def run():
     image_shape = (160, 576)
     data_dir = './data'
     runs_dir = './runs'
-    epochs = 50
+    epochs = 25
     batch_size = 3
     ##########################################
 
@@ -56,13 +56,13 @@ def run():
             for images, labels in get_batches_fn(batch_size):
                 feed = {x_placeholder: images,
                         y_placeholder: labels,
-                        lr_placeholder: 1e-1,
+                        lr_placeholder: 1e-2,
                         is_train_placeholder : True }
             
                 _, loss_value = sess.run([train_op, fcn_model.loss_op], feed_dict = feed)
                 total_loss_value += loss_value
                 # print("loss : {:.2f}".format(loss_value))
-            print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
+            print("epoch: {}/{}, training loss: {:.4f}".format(epoch+1, epochs, total_loss_value))
 
 #             feed = {x_placeholder: images,
 #                     y_placeholder: labels,
@@ -75,7 +75,7 @@ def run():
         
  
         saver = tf.train.Saver()
-        saver.save(sess, "models/model.ckpt")
+        saver.save(sess, "models22/model.ckpt")
          
         # TODO: Save inference data using helper.save_inference_samples
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
