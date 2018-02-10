@@ -91,21 +91,6 @@ def run():
         plot_img([img[0], y_gt[0, :, :, 1], y_pred[0, :, :, 1]])
         
         
-import scipy.misc
-import numpy as np
-def gen_test_output(sess, logits, is_training, image_pl, image):
-    image_shape = image.shape[:2]
-    im_softmax = sess.run(
-        [tf.nn.softmax(logits)],
-        {is_training: False, image_pl: [image]})
-    im_softmax = im_softmax[0][:, 1].reshape(image_shape[0], image_shape[1])
-    segmentation = (im_softmax > 0.5).reshape(image_shape[0], image_shape[1], 1)
-    mask = np.dot(segmentation, np.array([[0, 255, 0, 127]]))
-    mask = scipy.misc.toimage(mask, mode="RGBA")
-    street_im = scipy.misc.toimage(image)
-    street_im.paste(mask, box=None, mask=mask)
-    return street_im
-
 def plot_img(images, show=True, save_filename=None):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(nrows=1, ncols=len(images))
