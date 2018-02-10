@@ -1,15 +1,26 @@
 # -*- coding: utf-8 -*-
-
+import argparse
 import tensorflow as tf
 import helper
 
 from src.fcn import FcnModel
 
+DATA_DIR = './data_tiny'
+RUNS_DIR = './runs_tiny'
+
+argparser = argparse.ArgumentParser(description='Inference using pretrained model')
+argparser.add_argument('-d',
+                       '--dataset',
+                       default=DATA_DIR,
+                       help='path to dataset')
+argparser.add_argument('-r',
+                       '--runs',
+                       default=RUNS_DIR,
+                       help='path to saved directory')
+
 if __name__ == '__main__':
-    num_classes = 2
     image_shape = (160, 576)
-    data_dir = './data_tiny'
-    runs_dir = './runs_tiny'
+    num_classes = 2
 
     x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
     y_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
