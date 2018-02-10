@@ -45,3 +45,19 @@ def gen_batch_function(data_folder, image_shape):
 
             yield np.array(images), np.array(gt_images)
     return get_batches_fn
+
+
+if __name__ == '__main__':
+    image_shape = (160, 576)
+    get_batches_fn = gen_batch_function('../data/data_road/training', image_shape)
+    batch_gen = get_batches_fn(100)
+    imgs, gt_imgs = next(batch_gen)
+    print(imgs.shape, gt_imgs.shape)
+    
+    from src.utils import plot_img
+    plot_img([imgs[1], gt_imgs[1,:,:,1], gt_imgs[1,:,:,0]])
+    
+    
+    
+    
+    
