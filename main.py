@@ -74,6 +74,7 @@ def run():
     train_op = tf.train.AdamOptimizer(lr_placeholder).minimize(fcn_model.loss_op)
     
     with tf.Session() as sess:
+        import numpy as np
         # Create function to get batches
         get_batches_fn = gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
         data_gen = get_batches_fn(1)
@@ -81,11 +82,19 @@ def run():
         
         # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
+        
         saver = tf.train.Saver()
         saver.restore(sess, "models/model.ckpt")
         y_pred = sess.run(tf.nn.softmax(fcn_model.inference_op), feed_dict = {x_placeholder: img,
                                                                               is_train_placeholder : False})
-        
+        sess.run(fcn_model.update_op, feed_dict = {x_placeholder: img,
+                                                   y_placeholder: np.array(y_gt),
+                                                   is_train_placeholder : False})
+        accuracy, iou = sess.run([fcn_model.accuracy_op, fcn_model.iou_op], feed_dict = {x_placeholder: img,
+                                                                                         y_placeholder: np.array(y_gt),
+                                                                                         is_train_placeholder : False})
+        print(accuracy, iou)
         plot_img([img[0], y_gt[0, :, :, 1], y_pred[0, :, :, 1]])
         
         
