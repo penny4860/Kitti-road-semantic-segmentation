@@ -67,7 +67,6 @@ def run():
     lr_placeholder = tf.placeholder(tf.float32)
     is_train_placeholder = tf.placeholder(tf.bool)
 
-
     keep_prob = tf.placeholder(tf.float32)
     
     from src.fcn import FcnModel
@@ -77,25 +76,47 @@ def run():
     with tf.Session() as sess:
         # Create function to get batches
         get_batches_fn = gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
- 
+        data_gen = get_batches_fn(1)
+        img, y_gt = next(data_gen)
+        
         # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
-        load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
-        
-        train_nn(sess, 50, 2, get_batches_fn, 
-                 train_op, fcn_model.loss_op, x_placeholder,
-                 y_placeholder, keep_prob, lr_placeholder, is_train_placeholder)
- 
         saver = tf.train.Saver()
-        saver.save(sess, "models/model.ckpt")
-        # saver.restore(sess, "models/model.ckpt")
-         
-        # TODO: Save inference data using helper.save_inference_samples
+        saver.restore(sess, "models/model.ckpt")
+        y_pred = sess.run(tf.nn.softmax(fcn_model.inference_op), feed_dict = {x_placeholder: img,
+                                                                              is_train_placeholder : False})
+        
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_train_placeholder, x_placeholder)
- 
-        # OPTIONAL: Apply the trained model to a video
-        # Run the model with the test images and save each painted output image (roads painted green)
+        # print(img[0].shape, y_gt[0].shape, y_pred[0].shape, img_street[0].shape)
+        plot_img([img[0], y_gt[0, :, :, 1], y_pred[0, :, :, 1]])
+        
+        
+import scipy.misc
+import numpy as np
+def gen_test_output(sess, logits, is_training, image_pl, image):
+    image_shape = image.shape[:2]
+    im_softmax = sess.run(
+        [tf.nn.softmax(logits)],
+        {is_training: False, image_pl: [image]})
+    im_softmax = im_softmax[0][:, 1].reshape(image_shape[0], image_shape[1])
+    segmentation = (im_softmax > 0.5).reshape(image_shape[0], image_shape[1], 1)
+    mask = np.dot(segmentation, np.array([[0, 255, 0, 127]]))
+    mask = scipy.misc.toimage(mask, mode="RGBA")
+    street_im = scipy.misc.toimage(image)
+    street_im.paste(mask, box=None, mask=mask)
+    return street_im
+
+def plot_img(images, show=True, save_filename=None):
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(nrows=1, ncols=len(images))
+    for i, img in enumerate(images):
+        plt.subplot(4, 1, i+1)
+        plt.imshow(img)
+    if show:
+        plt.show()
+    if save_filename:
+        plt.savefig(save_filename, bbox_inches='tight')
+        print("{} is saved".format(save_filename))
         
 
 
