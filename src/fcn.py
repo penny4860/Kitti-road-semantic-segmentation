@@ -15,12 +15,11 @@ class FcnModel(object):
         ################################################################
         self.inference_op = self._create_inference_op(n_classes)
         self.loss_op = self._create_loss_op(y_true_tensor)
-        #self.mean_iou_op, self.update_op = self._create_accuracy_op(y_true_tensor)
-        self.accuracy_op, self.iou_op, self.update_op = self._create_accuracy_op(y_true_tensor)
+        self.accuracy_op, self.iou_op, self.update_op = self._create_eval_op(y_true_tensor)
         self.summary_op = self._create_train_summary_op()
         ################################################################
         
-    def _create_accuracy_op(self, y_true_tensor):
+    def _create_eval_op(self, y_true_tensor):
         logits = tf.reshape(self.inference_op, (-1, self._n_classes))
         probs = tf.nn.softmax(logits)
         pred_labels = tf.argmax(probs, 1)
