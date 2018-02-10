@@ -21,6 +21,7 @@ argparser.add_argument('-r',
 if __name__ == '__main__':
     image_shape = (160, 576)
     num_classes = 2
+    args = argparser.parse_args()
 
     x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
     y_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
@@ -34,4 +35,10 @@ if __name__ == '__main__':
         saver.restore(sess, "models/model.ckpt")
         
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_train_placeholder, x_placeholder)
+        helper.save_inference_samples(args.dataset,
+                                      args.runs,
+                                      sess,
+                                      image_shape, 
+                                      logits,
+                                      is_train_placeholder,
+                                      x_placeholder)
