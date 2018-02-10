@@ -86,8 +86,6 @@ def run():
         y_pred = sess.run(tf.nn.softmax(fcn_model.inference_op), feed_dict = {x_placeholder: img,
                                                                               is_train_placeholder : False})
         
-        logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
-        # print(img[0].shape, y_gt[0].shape, y_pred[0].shape, img_street[0].shape)
         plot_img([img[0], y_gt[0, :, :, 1], y_pred[0, :, :, 1]])
         
         
