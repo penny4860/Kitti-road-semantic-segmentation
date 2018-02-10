@@ -98,13 +98,13 @@ def run():
                 # print("loss : {:.2f}".format(loss_value))
             print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
 
-            feed = {x_placeholder: images,
-                    y_placeholder: labels,
-                    is_train_placeholder : False }
-            sess.run(tf.local_variables_initializer())
-            sess.run(fcn_model.update_op, feed_dict = feed)
-            loss_value, acc, iou = sess.run([fcn_model.loss_op, fcn_model.accuracy_op, fcn_model.iou_op], feed_dict = feed)
-            print("    loss: {:.3f}, accuracy: {:.3f}, iou: {:.3f}".format(loss_value, acc, iou))
+#             feed = {x_placeholder: images,
+#                     y_placeholder: labels,
+#                     is_train_placeholder : False }
+#             sess.run(tf.local_variables_initializer())
+#             sess.run(fcn_model.update_op, feed_dict = feed)
+#             loss_value, acc, iou = sess.run([fcn_model.loss_op, fcn_model.accuracy_op, fcn_model.iou_op], feed_dict = feed)
+#             print("    loss: {:.3f}, accuracy: {:.3f}, iou: {:.3f}".format(loss_value, acc, iou))
         ###############################################################################################        
         
  
