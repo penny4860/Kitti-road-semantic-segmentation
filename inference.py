@@ -7,6 +7,7 @@ from src.fcn import FcnModel
 
 DEFAULT_DATA_DIR = './data_tiny'
 DEFAULT_RUNS_DIR = './runs_tiny'
+DEFAULT_MODEL_PATH = "models/model.ckpt"
 
 argparser = argparse.ArgumentParser(description='Inference using pretrained model')
 argparser.add_argument('-d',
@@ -17,6 +18,11 @@ argparser.add_argument('-r',
                        '--runs',
                        default=DEFAULT_RUNS_DIR,
                        help='path to saved directory')
+argparser.add_argument('-m',
+                       '--model',
+                       default=DEFAULT_MODEL_PATH,
+                       help='path to saved model')
+
 
 if __name__ == '__main__':
     image_shape = (160, 576)
@@ -32,7 +38,7 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
-        saver.restore(sess, "models/model.ckpt")
+        saver.restore(sess, args.model)
         
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
         helper.save_inference_samples(args.runs,
