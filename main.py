@@ -54,7 +54,7 @@ def load_vgg_ckpt(sess, ckpt='ckpts/vgg_16.ckpt'):
 
 def run():
     num_classes = 2
-    image_shape = (160, 576)
+    image_shape = (64, 224)
     data_dir = './data_tiny'
     runs_dir = './runs_tiny'
     # tests.test_for_kitti_dataset(data_dir)
