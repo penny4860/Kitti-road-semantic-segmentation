@@ -1,21 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
-import numpy as np
-import os
-import helper
-
-from src.utils import plot_img
+import argparse
 from src.fcn import FcnModel
 from src.batch import gen_batch_function
+
+DEFAULT_TEST_DIR = './data_tiny/data_road/training'
+DEFAULT_MODEL_PATH = "models/model.ckpt"
+
+argparser = argparse.ArgumentParser(description='Evaluate using pretrained model')
+argparser.add_argument('-t',
+                       '--test_dir',
+                       default=DEFAULT_TEST_DIR,
+                       help='path to dataset')
+argparser.add_argument('-m',
+                       '--model',
+                       default=DEFAULT_MODEL_PATH,
+                       help='path to saved model')
+
 
 if __name__ == '__main__':
     num_classes = 2
     image_shape = (160, 576)
-    data_dir = './data_tiny'
-    runs_dir = './runs_tiny'
-    test_path = os.path.join('./data_tiny', 'data_road/training')
-    model_path = "models/model.ckpt"
+    args = argparser.parse_args()
 
     x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
     y_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], num_classes])
@@ -23,11 +30,11 @@ if __name__ == '__main__':
     is_train_placeholder = tf.placeholder(tf.bool)
 
     fcn_model = FcnModel(x_placeholder, y_placeholder, is_train_placeholder, num_classes)
-    get_batches_fn = gen_batch_function(test_path, image_shape)
+    get_batches_fn = gen_batch_function(args.test_dir, image_shape)
 
     with tf.Session() as sess:
         saver = tf.train.Saver()
-        saver.restore(sess, model_path)
+        saver.restore(sess, args.model)
         
         ious = 0
         n_samples = 0
