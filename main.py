@@ -27,10 +27,10 @@ def run():
     ##########################################
     num_classes = 2
     image_shape = (160, 576)
-    data_dir = './data_tiny'
-    runs_dir = './runs_tiny'
+    data_dir = './data'
+    runs_dir = './runs'
     epochs = 50
-    batch_size = 2
+    batch_size = 3
     ##########################################
 
     x_placeholder = tf.placeholder(tf.float32, [None, image_shape[0], image_shape[1], 3])
