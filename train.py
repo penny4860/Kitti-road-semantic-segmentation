@@ -85,6 +85,10 @@ def run():
             if total_loss_value < best_loss:
                 saver.save(sess, "models/model.ckpt")
                 print("    best model update!!!")
+            
+            sess.run(fcn_model.summary_op)
+            
+            
 #             feed = {x_placeholder: images,
 #                     y_placeholder: labels,
 #                     is_train_placeholder : False }
