@@ -29,7 +29,7 @@ def run():
     image_shape = (160, 576)
     data_dir = './data'
     runs_dir = './runs'
-    epochs = 50
+    epochs = 25
     batch_size = 3
     ##########################################
 
