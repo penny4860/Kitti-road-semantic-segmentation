@@ -13,7 +13,7 @@ DEFAULT_DATA_DIR = './data'
 DEFAULT_RUNS_DIR = './runs'
 DEFAULT_MODEL_PATH = "models/model.ckpt"
 DEFAULT_EPOCHS = 20
-DEFAULT_BATCH_SIZE = 2
+DEFAULT_BATCH_SIZE = 3
 
 argparser = argparse.ArgumentParser(description='Training')
 argparser.add_argument('-d',
