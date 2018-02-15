@@ -1,5 +1,6 @@
 import os.path
 import tensorflow as tf
+import numpy as np
 import helper
 import warnings
 from distutils.version import LooseVersion
@@ -29,7 +30,7 @@ def run():
     image_shape = (160, 576)
     data_dir = './data'
     runs_dir = './runs'
-    epochs = 50
+    epochs = 25
     batch_size = 3
     ##########################################
 
@@ -49,21 +50,25 @@ def run():
         # Todo:  Augment Images for better results
         sess.run(tf.global_variables_initializer())
         load_vgg_ckpt(sess, os.path.join(data_dir, 'vgg/vgg_16.ckpt'))
+        saver = tf.train.Saver()
 
         ###############################################################################################
+        best_loss = np.inf
         for epoch in range(epochs):
             total_loss_value = 0
             for images, labels in get_batches_fn(batch_size):
                 feed = {x_placeholder: images,
                         y_placeholder: labels,
-                        lr_placeholder: 1e-1,
+                        lr_placeholder: 1e-2,
                         is_train_placeholder : True }
             
                 _, loss_value = sess.run([train_op, fcn_model.loss_op], feed_dict = feed)
                 total_loss_value += loss_value
                 # print("loss : {:.2f}".format(loss_value))
             print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
-
+            if total_loss_value < best_loss:
+                saver.save(sess, "models/model.ckpt")
+                print("    best model update!!!")
 #             feed = {x_placeholder: images,
 #                     y_placeholder: labels,
 #                     is_train_placeholder : False }
@@ -73,10 +78,6 @@ def run():
 #             print("    loss: {:.3f}, accuracy: {:.3f}, iou: {:.3f}".format(loss_value, acc, iou))
         ###############################################################################################        
         
- 
-        saver = tf.train.Saver()
-        saver.save(sess, "models/model.ckpt")
-         
         # TODO: Save inference data using helper.save_inference_samples
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, is_train_placeholder, x_placeholder)
