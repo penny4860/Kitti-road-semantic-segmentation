@@ -61,7 +61,8 @@ class FcnModel(object):
     def _create_train_summary_op(self):
         with tf.name_scope('train_summary'):
             summary_loss = tf.summary.scalar('loss', self.loss_op)
-            summary_op = tf.summary.merge([summary_loss], name='train_summary')
+            summary_acc = tf.summary.scalar('pixelwise_accuracy', self.accuracy_op)
+            summary_op = tf.summary.merge([summary_loss, summary_acc], name='train_summary')
             return summary_op
 
 
