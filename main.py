@@ -56,7 +56,7 @@ def run():
             for images, labels in get_batches_fn(batch_size):
                 feed = {x_placeholder: images,
                         y_placeholder: labels,
-                        lr_placeholder: 1e-1,
+                        lr_placeholder: 1e-2,
                         is_train_placeholder : True }
             
                 _, loss_value = sess.run([train_op, fcn_model.loss_op], feed_dict = feed)
