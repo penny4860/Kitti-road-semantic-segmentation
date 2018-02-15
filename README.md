@@ -1,8 +1,10 @@
 # Semantic Segmentation
 
-I have implemented semantic segmentation [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) dataset.
+I have implemented semantic segmentation using [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) dataset.
 
 <img src="examples/um.gif" height="100"> <img src="examples/umm.gif" height="100">
+
+I used the [FCN architecture](https://arxiv.org/pdf/1605.06211.pdf). I removed the dropout layer from the original FCN and added batchnorm to the encoder.
 
 
 ### Setup
