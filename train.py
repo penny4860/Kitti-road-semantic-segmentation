@@ -78,16 +78,15 @@ def run():
                         lr_placeholder: 1e-2,
                         is_train_placeholder : True }
             
-                _, loss_value = sess.run([train_op, fcn_model.loss_op], feed_dict = feed)
+                _, loss_value, summary_value = sess.run([train_op, fcn_model.loss_op, fcn_model.summary_op],
+                                                        feed_dict = feed)
                 total_loss_value += loss_value
                 # print("loss : {:.2f}".format(loss_value))
             print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, int(args.epochs), total_loss_value))
             if total_loss_value < best_loss:
                 saver.save(sess, "models/model.ckpt")
                 print("    best model update!!!")
-            
-            sess.run(fcn_model.summary_op)
-            
+                        
             
 #             feed = {x_placeholder: images,
 #                     y_placeholder: labels,
