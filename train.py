@@ -9,8 +9,8 @@ import tensorflow.contrib.slim as slim
 
 from src.fcn import FcnModel
 
-DEFAULT_DATA_DIR = './data_tiny'
-DEFAULT_RUNS_DIR = './runs_tiny'
+DEFAULT_DATA_DIR = './data'
+DEFAULT_RUNS_DIR = './runs'
 DEFAULT_MODEL_PATH = "models/model.ckpt"
 DEFAULT_EPOCHS = 25
 DEFAULT_BATCH_SIZE = 3
