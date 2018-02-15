@@ -5,8 +5,8 @@ import argparse
 from src.fcn import FcnModel
 from src.batch import gen_batch_function
 
-DEFAULT_TEST_DIR = './data/data_road/training'
-DEFAULT_MODEL_PATH = "models/fcn/model.ckpt"
+DEFAULT_TEST_DIR = './data_tiny/data_road/training'
+DEFAULT_MODEL_PATH = "models/model.ckpt"
 
 argparser = argparse.ArgumentParser(description='Evaluate using pretrained model')
 argparser.add_argument('-t',
