@@ -62,6 +62,8 @@ class FcnModel(object):
         with tf.name_scope('train_summary'):
             summary_loss = tf.summary.scalar('loss', self.loss_op)
             summary_acc = tf.summary.scalar('pixelwise_accuracy', self.accuracy_op)
+            
+            # Todo: inference image를 summay에 추가
             summary_op = tf.summary.merge([summary_loss, summary_acc], name='train_summary')
             return summary_op
 
