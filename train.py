@@ -12,8 +12,8 @@ from src.fcn import FcnModel
 DEFAULT_DATA_DIR = './data_tiny'
 DEFAULT_RUNS_DIR = './runs_tiny'
 DEFAULT_MODEL_PATH = "models/model.ckpt"
-DEFAULT_EPOCHS = 25
-DEFAULT_BATCH_SIZE = 3
+DEFAULT_EPOCHS = 20
+DEFAULT_BATCH_SIZE = 2
 
 argparser = argparse.ArgumentParser(description='Training')
 argparser.add_argument('-d',
@@ -56,6 +56,8 @@ def run():
     fcn_model = FcnModel(x_placeholder, y_placeholder, is_train_placeholder, num_classes)
     
     train_op = tf.train.AdamOptimizer(lr_placeholder).minimize(fcn_model.loss_op)
+    global_step = tf.Variable(0, dtype=tf.int32, trainable=False, name='global_step')
+    
     with tf.Session() as sess:
         # Create function to get batches
         get_batches_fn = gen_batch_function(os.path.join(args.dataset, 'data_road/training'),
