@@ -54,9 +54,9 @@ def run():
     lr_placeholder = tf.placeholder(tf.float32)
     is_train_placeholder = tf.placeholder(tf.bool)
     fcn_model = FcnModel(x_placeholder, y_placeholder, is_train_placeholder, num_classes)
-    
-    train_op = tf.train.AdamOptimizer(lr_placeholder).minimize(fcn_model.loss_op)
+
     global_step = tf.Variable(0, dtype=tf.int32, trainable=False, name='global_step')
+    train_op = tf.train.AdamOptimizer(lr_placeholder).minimize(fcn_model.loss_op, global_step)
     
     with tf.Session() as sess:
         # Create function to get batches
@@ -67,6 +67,7 @@ def run():
         sess.run(tf.global_variables_initializer())
         load_vgg_ckpt(sess, os.path.join(args.dataset, 'vgg/vgg_16.ckpt'))
         saver = tf.train.Saver()
+        writer = tf.summary.FileWriter('graphs/train', sess.graph)
 
         ###############################################################################################
         best_loss = np.inf
@@ -81,6 +82,8 @@ def run():
                 _, loss_value, summary_value = sess.run([train_op, fcn_model.loss_op, fcn_model.summary_op],
                                                         feed_dict = feed)
                 total_loss_value += loss_value
+                
+                writer.add_summary(summary_value, sess.run(global_step))
                 # print("loss : {:.2f}".format(loss_value))
             print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, int(args.epochs), total_loss_value))
             if total_loss_value < best_loss:
