@@ -30,7 +30,7 @@ def run():
     image_shape = (160, 576)
     data_dir = './data_tiny'
     runs_dir = './runs_tiny'
-    epochs = 50
+    epochs = 10
     batch_size = 2
     ##########################################
 
@@ -68,7 +68,7 @@ def run():
             print("epoch: {}/{}, training loss: {:.2f}".format(epoch+1, epochs, total_loss_value))
             if total_loss_value < best_loss:
                 saver.save(sess, "models/model.ckpt")
-                print("best model update!!!")
+                print("    best model update!!!")
 #             feed = {x_placeholder: images,
 #                     y_placeholder: labels,
 #                     is_train_placeholder : False }
