@@ -75,7 +75,7 @@ def run():
         
  
         saver = tf.train.Saver()
-        saver.save(sess, "models2/model.ckpt")
+        saver.save(sess, "models22/model.ckpt")
          
         # TODO: Save inference data using helper.save_inference_samples
         logits = tf.reshape(fcn_model.inference_op, (-1, num_classes))
