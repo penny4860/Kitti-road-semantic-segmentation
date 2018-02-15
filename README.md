@@ -29,7 +29,16 @@ You can use [eval.py](https://github.com/penny4860/semantic-segmentation/blob/ma
 
 ### Results
 
+Pretrained fcn model is saved at https://drive.google.com/drive/folders/137yefZhrpiJHxq_wPGOmKvv2gjUMvoTM
+
 * mean iou (interaction of union) score: 0.944
+* images
+
+
+
+
+
+
 
 
 
