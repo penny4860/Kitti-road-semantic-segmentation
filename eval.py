@@ -44,10 +44,27 @@ if __name__ == '__main__':
             sess.run(tf.local_variables_initializer())
             sess.run(fcn_model.update_op, feed_dict = feed)
             iou = sess.run(fcn_model.iou_op, feed_dict = feed)
-            ious += iou
+            segmentation_map = sess.run(tf.nn.softmax(fcn_model.inference_op),
+                                        feed_dict = feed)
+                                        
+            import matplotlib.pyplot as plt
+            images = [images[0], labels[0,:,:,1], segmentation_map[0,:,:,1]]
+            titles = ["Original image",
+                      "Ground truth road pixels",
+                      "Inferenced pixels (iou-score: {:.2f})".format(iou)]
+            
+            fig, ax = plt.subplots(nrows=1, ncols=len(images))
+            for i, (img, title) in enumerate(zip(images, titles)):
+                plt.subplot(len(images), 1, i+1)
+                plt.title(title, fontsize=15)
+                plt.imshow(img)
+                plt.axis('off')
+            plt.tight_layout(h_pad=1.0)
+            plt.savefig("{}.png".format(n_samples), bbox_inches='tight')
+            print("{}.png".format(n_samples))
             n_samples += 1
             
-        mean_iou = ious/n_samples
-        print("mean-iou score: {:.3f}".format(mean_iou))
+#         mean_iou = ious/n_samples
+#         print("mean-iou score: {:.3f}".format(mean_iou))
         
             
