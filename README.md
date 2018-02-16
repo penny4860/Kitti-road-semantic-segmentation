@@ -10,10 +10,18 @@ I used the [FCN architecture](https://arxiv.org/pdf/1605.06211.pdf). I removed t
 ### Setup
 
 Make sure you have the following is installed:
- - [Python 3](https://www.python.org/)
- - [TensorFlow](https://www.tensorflow.org/)
- - [NumPy](http://www.numpy.org/)
- - [SciPy](https://www.scipy.org/)
+* python 3.5
+* tensorflow 1.2.1
+* Etc.
+
+I recommend that you create and use an anaconda env that is independent of your project. You can create anaconda env for this project by following these simple steps. This process has been verified on Windows 10 and ubuntu 16.04.
+
+```
+$ conda create -n seg python=3.5 anaconda=4.4.0
+$ source activate seg # in windows "activate seg"
+(seg) $ pip install tensorflow==1.2.1
+```
+
 
 ### Usage
 
