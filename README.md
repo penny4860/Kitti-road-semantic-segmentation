@@ -33,10 +33,23 @@ You can use [eval.py](https://github.com/penny4860/semantic-segmentation/blob/ma
 
 Pretrained fcn model is saved at [fcn.zip](https://drive.google.com/drive/folders/137yefZhrpiJHxq_wPGOmKvv2gjUMvoTM)
 
+##### 1. Training summary
+
+During training, loss and pixelwise classification accuracy were monitored using a tensorboard.
+
+<img src="examples/tensorboard.png" height="200">
+
+##### 2. Predicted road pixels
+
+The figure below shows the ground truth road pixel and the pixel predicted by the trained model.
+
 <img src="examples/fcn_result.png" height="300">
 
-* mean iou (interaction of union) score: 0.944
+##### 3. Performance evaluation : Mean Intersection over Union (mean-iou)
 
+``mean-iou`` is the standard metric for segmentation purposes. It computes a ratio between the intersection and the union of two sets.
+
+Using [tf.metrics.mean_iou](https://www.tensorflow.org/api_docs/python/tf/metrics/mean_iou), the mean_iou of the trained model is evaluated to be **0.944**.
 
 
 
