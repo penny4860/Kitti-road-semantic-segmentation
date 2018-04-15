@@ -107,5 +107,3 @@ models
 logs
 *project*
 data_tiny/vgg
-runs_tiny
-video

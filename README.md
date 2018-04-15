@@ -1,76 +1,46 @@
 # Semantic Segmentation
-
-I have implemented semantic segmentation using [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) dataset.
-
-<img src="examples/um.gif" height="100"> <img src="examples/umm.gif" height="100">
-
-I used the [FCN architecture](https://arxiv.org/pdf/1605.06211.pdf). I removed the dropout layer from the original FCN and added batchnorm to the encoder.
-
+### Introduction
+In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).
 
 ### Setup
-
+##### Frameworks and Packages
 Make sure you have the following is installed:
-* python 3.5
-* tensorflow 1.2.1
-* Etc.
-
-I recommend that you create and use an anaconda env that is independent of your project. You can create anaconda env for this project by following these simple steps. This process has been verified on Windows 10 and ubuntu 16.04.
-
-```
-$ conda create -n seg python=3.5 anaconda=4.4.0
-$ source activate seg # in windows "activate seg"
-(seg) $ pip install tensorflow==1.2.1
-```
-
-
-### Usage
-
-##### 1. Download dataset
-
+ - [Python 3](https://www.python.org/)
+ - [TensorFlow](https://www.tensorflow.org/)
+ - [NumPy](http://www.numpy.org/)
+ - [SciPy](https://www.scipy.org/)
+##### Dataset
 Download the [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) from [here](http://www.cvlibs.net/download.php?file=data_road.zip).  Extract the dataset in the `data` folder.  This will create the folder `data_road` with all the training a test images.
 
-##### 2. Download pretrained vgg checkpoint file
+### Start
+##### Implement
+Implement the code in the `main.py` module indicated by the "TODO" comments.
+The comments indicated with "OPTIONAL" tag are not required to complete.
+##### Run
+Run the following command to run the project:
+```
+python main.py
+```
+**Note** If running this in Jupyter Notebook system messages, such as those regarding test status, may appear in the terminal rather than the notebook.
 
-* Download the vgg16 checkpoint file at https://github.com/tensorflow/models/tree/master/research/slim#pre-trained-models.
-* Extract the downloaded file.
-* Move the vgg_16.ckpt file to the project/root/data/vgg directory.
+### Submission
+1. Ensure you've passed all the unit tests.
+2. Ensure you pass all points on [the rubric](https://review.udacity.com/#!/rubrics/989/view).
+3. Submit the following in a zip file.
+ - `helper.py`
+ - `main.py`
+ - `project_tests.py`
+ - Newest inference images from `runs` folder  (**all images from the most recent run**)
+ 
+ ### Tips
+- The link for the frozen `VGG16` model is hardcoded into `helper.py`.  The model can be found [here](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/vgg.zip)
+- The model is not vanilla `VGG16`, but a fully convolutional version, which already contains the 1x1 convolutions to replace the fully connected layers. Please see this [forum post](https://discussions.udacity.com/t/here-is-some-advice-and-clarifications-about-the-semantic-segmentation-project/403100/8?u=subodh.malgonde) for more information.  A summary of additional points, follow. 
+- The original FCN-8s was trained in stages. The authors later uploaded a version that was trained all at once to their GitHub repo.  The version in the GitHub repo has one important difference: The outputs of pooling layers 3 and 4 are scaled before they are fed into the 1x1 convolutions.  As a result, some students have found that the model learns much better with the scaling layers included. The model may not converge substantially faster, but may reach a higher IoU and accuracy. 
+- When adding l2-regularization, setting a regularizer in the arguments of the `tf.layers` is not enough. Regularization loss terms must be manually added to your loss function. otherwise regularization is not implemented.
+ 
+### Using GitHub and Creating Effective READMEs
+If you are unfamiliar with GitHub , Udacity has a brief [GitHub tutorial](http://blog.udacity.com/2015/06/a-beginners-git-github-tutorial.html) to get you started. Udacity also provides a more detailed free [course on git and GitHub](https://www.udacity.com/course/how-to-use-git-and-github--ud775).
 
-##### 3. Train model
+To learn about REAMDE files and Markdown, Udacity provides a free [course on READMEs](https://www.udacity.com/courses/ud777), as well. 
 
-Train fully connected nework model for segmentation using [train.py](https://github.com/penny4860/semantic-segmentation/blob/master/train.py). The training parameter and the path to the model to be saved can be set with argparser.
-
-##### 4. Evaluation trained model
-
-You can use [eval.py](https://github.com/penny4860/semantic-segmentation/blob/master/eval.py) to evaluate the performance of the learned model. eval.py calculates the mean-iou for the road pixel and outputs it.
-
-### Results
-
-Pretrained fcn model is saved at [fcn.zip](https://drive.google.com/drive/folders/137yefZhrpiJHxq_wPGOmKvv2gjUMvoTM)
-
-##### 1. Training summary
-
-During training, loss and pixelwise classification accuracy were monitored using a tensorboard.
-
-<img src="examples/tensorboard.png" height="200">
-
-##### 2. Predicted road pixels
-
-The figure below shows the ground truth road pixel and the pixel predicted by the trained model.
-
-<img src="examples/fcn_result.png" height="300">
-
-##### 3. Performance evaluation : Mean Intersection over Union (mean-iou)
-
-``mean-iou`` is the standard metric for segmentation purposes. It computes a ratio between the intersection and the union of two sets.
-
-Using [tf.metrics.mean_iou](https://www.tensorflow.org/api_docs/python/tf/metrics/mean_iou), the mean_iou of the trained model is evaluated to be **0.944**.
-
-
-
-
-
-
-
-
-
-
+GitHub also provides a [tutorial](https://guides.github.com/features/mastering-markdown/) about creating Markdown files.
